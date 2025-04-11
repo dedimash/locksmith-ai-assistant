@@ -1,0 +1,333 @@
+{% extends "layout.html" %}
+
+{% block title %}Locksmith AI Assistant - System Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">System Management</h1>
+    
+    <!-- System Status Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold">System Status</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">Twilio Service</h6>
+                                    <p class="card-text" id="twilio-status">Online</p>
+                                </div>
+                                <i class="bi bi-telephone-fill fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">OpenAI Service</h6>
+                                    <p class="card-text" id="openai-status">Online</p>
+                                </div>
+                                <i class="bi bi-cpu-fill fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">ElevenLabs Service</h6>
+                                    <p class="card-text" id="elevenlabs-status">Online</p>
+                                </div>
+                                <i class="bi bi-soundwave fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="card-title">Web Server</h6>
+                                    <p class="card-text" id="server-status">Online</p>
+                                </div>
+                                <i class="bi bi-hdd-rack-fill fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <button class="btn btn-primary" id="check-status-btn">
+                        <i class="bi bi-arrow-repeat me-2"></i> Check Status
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- API Configuration Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold">API Configuration</h6>
+        </div>
+        <div class="card-body">
+            <form id="api-config-form">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="twilio-account-sid" class="form-label">Twilio Account SID</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="twilio-account-sid" value="AC27ce43e7ed60895230a5246b32a5b247">
+                            <button class="btn btn-outline-secondary" type="button" id="test-twilio-btn">Test</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="twilio-auth-token" class="form-label">Twilio Auth Token</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="twilio-auth-token" value="••••••••••••••••••••••••">
+                            <button class="btn btn-outline-secondary" type="button" id="show-twilio-token-btn">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="twilio-phone-number" class="form-label">Twilio Phone Number</label>
+                        <input type="text" class="form-control" id="twilio-phone-number" value="+16282579348">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="openai-api-key" class="form-label">OpenAI API Key</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="openai-api-key" value="••••••••••••••••••••••••">
+                            <button class="btn btn-outline-secondary" type="button" id="show-openai-key-btn">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" type="button" id="test-openai-btn">Test</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="elevenlabs-api-key" class="form-label">ElevenLabs API Key</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="elevenlabs-api-key" value="••••••••••••••••••••••••">
+                            <button class="btn btn-outline-secondary" type="button" id="show-elevenlabs-key-btn">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" type="button" id="test-elevenlabs-btn">Test</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Save API Configuration</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- System Logs Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold">System Logs</h6>
+            <div>
+                <button class="btn btn-sm btn-outline-secondary me-2" id="refresh-logs-btn">
+                    <i class="bi bi-arrow-repeat me-1"></i> Refresh
+                </button>
+                <button class="btn btn-sm btn-outline-danger" id="clear-logs-btn">
+                    <i class="bi bi-trash me-1"></i> Clear Logs
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="form-group mb-3">
+                <label for="log-level" class="form-label">Log Level</label>
+                <select class="form-select" id="log-level">
+                    <option value="error">Error</option>
+                    <option value="warning">Warning</option>
+                    <option value="info" selected>Info</option>
+                    <option value="debug">Debug</option>
+                </select>
+            </div>
+            <div class="log-container bg-dark text-light p-3 rounded" style="height: 400px; overflow-y: auto;">
+                <pre id="system-logs">Loading logs...</pre>
+            </div>
+        </div>
+    </div>
+    
+    <!-- System Maintenance Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold">System Maintenance</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Backup System</h5>
+                            <p class="card-text">Create a backup of all call logs and system configuration.</p>
+                            <button class="btn btn-primary" id="backup-system-btn">
+                                <i class="bi bi-download me-2"></i> Create Backup
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Clean Old Logs</h5>
+                            <p class="card-text">Remove call logs older than the specified period.</p>
+                            <div class="input-group mb-3">
+                                <select class="form-select" id="cleanup-period">
+                                    <option value="30">30 days</option>
+                                    <option value="60">60 days</option>
+                                    <option value="90">90 days</option>
+                                    <option value="180">180 days</option>
+                                </select>
+                                <button class="btn btn-primary" id="cleanup-logs-btn">Clean</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Restart System</h5>
+                            <p class="card-text">Restart the AI assistant system services.</p>
+                            <button class="btn btn-warning" id="restart-system-btn">
+                                <i class="bi bi-arrow-clockwise me-2"></i> Restart System
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle password visibility
+        const togglePasswordButtons = [
+            { buttonId: 'show-twilio-token-btn', inputId: 'twilio-auth-token' },
+            { buttonId: 'show-openai-key-btn', inputId: 'openai-api-key' },
+            { buttonId: 'show-elevenlabs-key-btn', inputId: 'elevenlabs-api-key' }
+        ];
+        
+        togglePasswordButtons.forEach(function(item) {
+            const button = document.getElementById(item.buttonId);
+            const input = document.getElementById(item.inputId);
+            
+            if (button && input) {
+                button.addEventListener('click', function() {
+                    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                    input.setAttribute('type', type);
+                    button.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+                });
+            }
+        });
+        
+        // API Configuration Form
+        const apiConfigForm = document.getElementById('api-config-form');
+        if (apiConfigForm) {
+            apiConfigForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const twilioSid = document.getElementById('twilio-account-sid').value;
+                const twilioToken = document.getElementById('twilio-auth-token').value;
+                const twilioPhone = document.getElementById('twilio-phone-number').value;
+                const openaiKey = document.getElementById('openai-api-key').value;
+                const elevenlabsKey = document.getElementById('elevenlabs-api-key').value;
+                
+                // In a real application, this would send an API request to update the settings
+                fetch('/api/settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        twilio_account_sid: twilioSid,
+                        twilio_auth_token: twilioToken,
+                        twilio_phone_number: twilioPhone,
+                        openai_api_key: openaiKey,
+                        elevenlabs_api_key: elevenlabsKey
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('API configuration saved successfully');
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while saving API configuration');
+                });
+            });
+        }
+        
+        // Test API buttons
+        const testButtons = [
+            { buttonId: 'test-twilio-btn', service: 'twilio' },
+            { buttonId: 'test-openai-btn', service: 'openai' },
+            { buttonId: 'test-elevenlabs-btn', service: 'elevenlabs' }
+        ];
+        
+        testButtons.forEach(function(item) {
+            const button = document.getElementById(item.buttonId);
+            
+            if (button) {
+                button.addEventListener('click', function() {
+                    // In a real application, this would send an API request to test the service
+                    alert(`Testing ${item.service} connection...`);
+                    
+                    // Simulate API test
+                    setTimeout(function() {
+                        alert(`${item.service} connection successful!`);
+                    }, 1000);
+                });
+            }
+        });
+        
+        // Check Status Button
+        const checkStatusBtn = document.getElementById('check-status-btn');
+        if (checkStatusBtn) {
+            checkStatusBtn.addEventListener('click', function() {
+                // In a real application, this would send an API request to check service status
+                alert('Checking system status...');
+                
+                // Simulate status check
+                setTimeout(function() {
+                    document.getElementById('twilio-status').textContent = 'Online';
+                    document.getElementById('openai-status').textContent = 'Online';
+                    document.getElementById('elevenlabs-status').textContent = 'Online';
+                    document.getElementById('server-status').textContent = 'Online';
+                    
+                    alert('All services are online and operational');
+                }, 1000);
+            });
+        }
+        
+        // System Logs
+        const refreshLogsBtn = document.getElementById('refresh-logs-btn');
+        const clearLogsBtn = document.getElementById('clear-logs-btn');
+        const logLevel = document.getElementById('log-level');
+        const systemLogs = document.getElementById('system-logs');
+        
+        // Sample logs for demonstration
+        const sampleLogs = [
+            '[2025-04-10 2
+(Content truncated due to size limit. Use line ranges to read in chunks)

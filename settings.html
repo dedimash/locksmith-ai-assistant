@@ -1,0 +1,217 @@
+{% extends "layout.html" %}
+
+{% block title %}Locksmith AI Assistant - Settings{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">Settings</h1>
+    
+    <!-- System Settings Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold">System Settings</h6>
+        </div>
+        <div class="card-body">
+            <form id="system-settings-form">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="twilio-account-sid" class="form-label">Twilio Account SID</label>
+                        <input type="text" class="form-control" id="twilio-account-sid" value="AC27ce43e7ed60895230a5246b32a5b247">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="twilio-auth-token" class="form-label">Twilio Auth Token</label>
+                        <input type="password" class="form-control" id="twilio-auth-token" value="••••••••••••••••••••••••">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="twilio-phone-number" class="form-label">Twilio Phone Number</label>
+                        <input type="text" class="form-control" id="twilio-phone-number" value="+16282579348">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="webhook-url" class="form-label">Webhook URL</label>
+                        <input type="text" class="form-control" id="webhook-url" value="https://locksmith-ai-assistant.example.com/answer">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="openai-api-key" class="form-label">OpenAI API Key</label>
+                        <input type="password" class="form-control" id="openai-api-key" value="••••••••••••••••••••••••">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="elevenlabs-api-key" class="form-label">ElevenLabs API Key</label>
+                        <input type="password" class="form-control" id="elevenlabs-api-key" value="••••••••••••••••••••••••">
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Save Settings</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Voice Settings Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold">Voice Settings</h6>
+        </div>
+        <div class="card-body">
+            <form id="voice-settings-form">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="voice-selection" class="form-label">Voice Selection</label>
+                        <select class="form-select" id="voice-selection">
+                            <option value="rachel" selected>Rachel (Professional Female)</option>
+                            <option value="sam">Sam (Professional Male)</option>
+                            <option value="emily">Emily (Friendly Female)</option>
+                            <option value="michael">Michael (Friendly Male)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="voice-speed" class="form-label">Voice Speed</label>
+                        <input type="range" class="form-range" min="0.5" max="1.5" step="0.1" value="1.0" id="voice-speed">
+                        <div class="d-flex justify-content-between">
+                            <small>Slower</small>
+                            <small>Normal</small>
+                            <small>Faster</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="test-text" class="form-label">Test Voice</label>
+                    <textarea class="form-control mb-2" id="test-text" rows="2">Thanks for calling the Locksmith, this is Angi, may I know your name?</textarea>
+                    <button type="button" class="btn btn-outline-primary" id="test-voice-btn">
+                        <i class="bi bi-play-fill me-1"></i> Play Test
+                    </button>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Save Voice Settings</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Conversation Script Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold">Conversation Script</h6>
+        </div>
+        <div class="card-body">
+            <form id="conversation-script-form">
+                <div class="mb-3">
+                    <label for="greeting-script" class="form-label">Greeting</label>
+                    <input type="text" class="form-control" id="greeting-script" value="Thanks for calling the Locksmith, this is Angi, may I know your name?">
+                </div>
+                <div class="mb-3">
+                    <label for="phone-script" class="form-label">Phone Number Request</label>
+                    <input type="text" class="form-control" id="phone-script" value="What is the best number to call you back on?">
+                </div>
+                <div class="mb-3">
+                    <label for="service-script" class="form-label">Service Request</label>
+                    <input type="text" class="form-control" id="service-script" value="What service can we help you with?">
+                </div>
+                <div class="mb-3">
+                    <label for="vehicle-script" class="form-label">Vehicle Information Request</label>
+                    <input type="text" class="form-control" id="vehicle-script" value="What is the make, model and year of the vehicle?">
+                </div>
+                <div class="mb-3">
+                    <label for="business-script" class="form-label">Business Name Request</label>
+                    <input type="text" class="form-control" id="business-script" value="What is the name of the business?">
+                </div>
+                <div class="mb-3">
+                    <label for="location-script" class="form-label">Location Request</label>
+                    <input type="text" class="form-control" id="location-script" value="What is the address where you need help?">
+                </div>
+                <div class="mb-3">
+                    <label for="closing-script" class="form-label">Closing</label>
+                    <input type="text" class="form-control" id="closing-script" value="Ok, please stay by your phone, the technician will call you right back.">
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Save Script</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Account Settings Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold">Account Settings</h6>
+        </div>
+        <div class="card-body">
+            <form id="account-settings-form">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="admin-username" class="form-label">Admin Username</label>
+                        <input type="text" class="form-control" id="admin-username" value="admin">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="admin-password" class="form-label">Admin Password</label>
+                        <input type="password" class="form-control" id="admin-password" placeholder="Enter new password">
+                        <small class="form-text text-muted">Leave blank to keep current password</small>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Update Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // System Settings Form
+        const systemSettingsForm = document.getElementById('system-settings-form');
+        if (systemSettingsForm) {
+            systemSettingsForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // In a real application, this would save the settings to the server
+                alert('System settings saved');
+            });
+        }
+        
+        // Voice Settings Form
+        const voiceSettingsForm = document.getElementById('voice-settings-form');
+        if (voiceSettingsForm) {
+            voiceSettingsForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // In a real application, this would save the voice settings to the server
+                alert('Voice settings saved');
+            });
+        }
+        
+        // Test Voice Button
+        const testVoiceBtn = document.getElementById('test-voice-btn');
+        if (testVoiceBtn) {
+            testVoiceBtn.addEventListener('click', function() {
+                const testText = document.getElementById('test-text').value;
+                // In a real application, this would generate and play audio using ElevenLabs
+                alert(`Playing test voice: "${testText}"`);
+            });
+        }
+        
+        // Conversation Script Form
+        const conversationScriptForm = document.getElementById('conversation-script-form');
+        if (conversationScriptForm) {
+            conversationScriptForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // In a real application, this would save the conversation script to the server
+                alert('Conversation script saved');
+            });
+        }
+        
+        // Account Settings Form
+        const accountSettingsForm = document.getElementById('account-settings-form');
+        if (accountSettingsForm) {
+            accountSettingsForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                // In a real application, this would update the admin account
+                alert('Account settings updated');
+            });
+        }
+    });
+</script>
+{% endblock %}

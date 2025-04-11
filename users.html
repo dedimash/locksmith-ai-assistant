@@ -1,0 +1,327 @@
+{% extends "layout.html" %}
+
+{% block title %}Locksmith AI Assistant - User Management{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>User Management</h1>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+            <i class="bi bi-person-plus-fill me-2"></i> Add New User
+        </button>
+    </div>
+    
+    <!-- Users Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold">System Users</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="users-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for username, user in users.items() %}
+                        <tr>
+                            <td>{{ username }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                <span class="badge {% if user.role == 'admin' %}bg-danger{% else %}bg-primary{% endif %}">
+                                    {{ user.role }}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary edit-user-btn" 
+                                        data-username="{{ username }}"
+                                        data-name="{{ user.name }}"
+                                        data-email="{{ user.email }}"
+                                        data-role="{{ user.role }}">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                {% if username != 'admin' and username != session.username %}
+                                <button class="btn btn-sm btn-outline-danger delete-user-btn" 
+                                        data-username="{{ username }}"
+                                        data-name="{{ user.name }}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-user-form">
+                    <div class="mb-3">
+                        <label for="new-username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="new-username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new-name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="new-name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new-email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="new-email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new-password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="new-password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new-role" class="form-label">Role</label>
+                        <select class="form-select" id="new-role">
+                            <option value="user">User</option>
+                            <option value="admin">Administrator</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save-new-user-btn">Add User</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-user-form">
+                    <input type="hidden" id="edit-username">
+                    <div class="mb-3">
+                        <label for="edit-name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="edit-name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="edit-email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-password" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="edit-password">
+                        <small class="form-text text-muted">Leave blank to keep current password</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-role" class="form-label">Role</label>
+                        <select class="form-select" id="edit-role">
+                            <option value="user">User</option>
+                            <option value="admin">Administrator</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="save-edit-user-btn">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete User Confirmation Modal -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteUserModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the user <strong id="delete-user-name"></strong>?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+                <input type="hidden" id="delete-username">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-user-btn">Delete User</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add User
+        const saveNewUserBtn = document.getElementById('save-new-user-btn');
+        if (saveNewUserBtn) {
+            saveNewUserBtn.addEventListener('click', function() {
+                const username = document.getElementById('new-username').value;
+                const name = document.getElementById('new-name').value;
+                const email = document.getElementById('new-email').value;
+                const password = document.getElementById('new-password').value;
+                const role = document.getElementById('new-role').value;
+                
+                if (!username || !name || !email || !password) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+                
+                // In a real application, this would send an API request to create the user
+                fetch('/api/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        name: name,
+                        email: email,
+                        password: password,
+                        role: role
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('User created successfully');
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while creating the user');
+                });
+            });
+        }
+        
+        // Edit User
+        const editUserBtns = document.querySelectorAll('.edit-user-btn');
+        const saveEditUserBtn = document.getElementById('save-edit-user-btn');
+        const editUserModal = new bootstrap.Modal(document.getElementById('editUserModal'));
+        
+        editUserBtns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const username = this.dataset.username;
+                const name = this.dataset.name;
+                const email = this.dataset.email;
+                const role = this.dataset.role;
+                
+                document.getElementById('edit-username').value = username;
+                document.getElementById('edit-name').value = name;
+                document.getElementById('edit-email').value = email;
+                document.getElementById('edit-role').value = role;
+                document.getElementById('edit-password').value = '';
+                
+                editUserModal.show();
+            });
+        });
+        
+        if (saveEditUserBtn) {
+            saveEditUserBtn.addEventListener('click', function() {
+                const username = document.getElementById('edit-username').value;
+                const name = document.getElementById('edit-name').value;
+                const email = document.getElementById('edit-email').value;
+                const password = document.getElementById('edit-password').value;
+                const role = document.getElementById('edit-role').value;
+                
+                if (!name || !email) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+                
+                // In a real application, this would send an API request to update the user
+                fetch(`/api/users/${username}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        email: email,
+                        password: password,
+                        role: role
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('User updated successfully');
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while updating the user');
+                });
+            });
+        }
+        
+        // Delete User
+        const deleteUserBtns = document.querySelectorAll('.delete-user-btn');
+        const confirmDeleteUserBtn = document.getElementById('confirm-delete-user-btn');
+        const deleteUserModal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
+        
+        deleteUserBtns.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const username = this.dataset.username;
+                const name = this.dataset.name;
+                
+                document.getElementById('delete-username').value = username;
+                document.getElementById('delete-user-name').textContent = name;
+                
+                deleteUserModal.show();
+            });
+        });
+        
+        if (confirmDeleteUserBtn) {
+            confirmDeleteUserBtn.addEventListener('click', function() {
+                const username = document.getElementById('delete-username').value;
+                
+                // In a real application, this would send an API request to delete the user
+                fetch(`/api/users/${username}`, {
+                    method: 'DELETE',
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('User deleted successfully');
+                        location.reload();
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting the user');
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

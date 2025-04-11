@@ -1,0 +1,172 @@
+{% extends "layout.html" %}
+
+{% block title %}Locksmith AI Assistant - Profile{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">User Profile</h1>
+    
+    <!-- Profile Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold">Your Profile Information</h6>
+        </div>
+        <div class="card-body">
+            <form id="profile-form">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="profile-username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="profile-username" value="{{ session.username }}" disabled>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="profile-role" class="form-label">Role</label>
+                        <input type="text" class="form-control" id="profile-role" value="{{ user.role }}" disabled>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="profile-name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="profile-name" value="{{ user.name }}">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="profile-email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="profile-email" value="{{ user.email }}">
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Change Password Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold">Change Password</h6>
+        </div>
+        <div class="card-body">
+            <form id="password-form">
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="current-password" class="form-label">Current Password</label>
+                        <input type="password" class="form-control" id="current-password" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="new-password" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="new-password" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="confirm-password" class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-control" id="confirm-password" required>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">Change Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Profile Update Form
+        const profileForm = document.getElementById('profile-form');
+        if (profileForm) {
+            profileForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('profile-name').value;
+                const email = document.getElementById('profile-email').value;
+                
+                if (!name || !email) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+                
+                // In a real application, this would send an API request to update the profile
+                fetch('/api/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        email: email
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Profile updated successfully');
+                        // Update session name in header
+                        const nameElement = document.querySelector('.navbar-text');
+                        if (nameElement) {
+                            nameElement.textContent = 'Logged in as: ' + name;
+                        }
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while updating your profile');
+                });
+            });
+        }
+        
+        // Password Change Form
+        const passwordForm = document.getElementById('password-form');
+        if (passwordForm) {
+            passwordForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const currentPassword = document.getElementById('current-password').value;
+                const newPassword = document.getElementById('new-password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+                
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    alert('Please fill in all password fields');
+                    return;
+                }
+                
+                if (newPassword !== confirmPassword) {
+                    alert('New password and confirmation do not match');
+                    return;
+                }
+                
+                // In a real application, this would send an API request to change the password
+                fetch('/api/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_password: newPassword
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Password changed successfully');
+                        // Clear password fields
+                        document.getElementById('current-password').value = '';
+                        document.getElementById('new-password').value = '';
+                        document.getElementById('confirm-password').value = '';
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while changing your password');
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block title %}Locksmith AI Assistant - Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="mt-5 mb-5">
+                <h1 class="display-4">Locksmith AI Assistant</h1>
+                <p class="lead">Your intelligent voice assistant for managing customer calls</p>
+            </div>
+            
+            <div class="card shadow-lg">
+                <div class="card-body p-5">
+                    <h2 class="mb-4">Welcome to Your AI Assistant Dashboard</h2>
+                    <p>This web interface allows you to manage your Locksmith AI Assistant, view call logs, and configure system settings.</p>
+                    
+                    <div class="d-grid gap-2 col-md-6 mx-auto mt-4">
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-box-arrow-in-right me-2"></i> Login to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-5">
+                <div class="col-md-4">
+                    <div class="card dashboard-card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-telephone-fill text-primary" style="font-size: 2rem;"></i>
+                            <h5 class="card-title mt-3">Call Management</h5>
+                            <p class="card-text">View and manage all customer calls handled by your AI assistant.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card dashboard-card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-graph-up text-success" style="font-size: 2rem;"></i>
+                            <h5 class="card-title mt-3">Analytics</h5>
+                            <p class="card-text">Get insights into call patterns and customer service requests.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card dashboard-card h-100">
+                        <div class="card-body text-center">
+                            <i class="bi bi-gear-fill text-warning" style="font-size: 2rem;"></i>
+                            <h5 class="card-title mt-3">System Settings</h5>
+                            <p class="card-text">Configure your AI assistant and manage system preferences.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

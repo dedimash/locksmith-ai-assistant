@@ -1,0 +1,117 @@
+/* Custom styles for Locksmith AI Assistant */
+
+/* Sidebar styles */
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    min-height: 100vh;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    transition: all 0.3s;
+}
+
+#sidebar.active {
+    margin-left: -250px;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: #343a40;
+}
+
+#sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+    color: #fff;
+    text-decoration: none;
+}
+
+#sidebar ul li a:hover {
+    color: #343a40;
+    background: #fff;
+}
+
+#sidebar ul li.active > a {
+    color: #fff;
+    background: #007bff;
+}
+
+#content {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Dashboard card styles */
+.dashboard-card {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card {
+    border-left: 4px solid;
+}
+
+.stat-card.primary {
+    border-left-color: #007bff;
+}
+
+.stat-card.success {
+    border-left-color: #28a745;
+}
+
+.stat-card.warning {
+    border-left-color: #ffc107;
+}
+
+.stat-card.danger {
+    border-left-color: #dc3545;
+}
+
+/* Call log table styles */
+.call-table tr {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.call-table tr:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+/* Login page styles */
+.login-container {
+    max-width: 400px;
+    margin: 100px auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+    #sidebarCollapse span {
+        display: none;
+    }
+}

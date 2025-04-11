@@ -1,0 +1,170 @@
+{% extends "layout.html" %}
+
+{% block title %}Locksmith AI Assistant - Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-icon {
+        font-size: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">Dashboard</h1>
+    
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow h-100 py-2 stat-card primary">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Calls</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800" id="total-calls">{{ total_calls }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-telephone-fill text-primary stat-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow h-100 py-2 stat-card success">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Recent Calls (24h)</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ recent_calls }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-clock-history text-success stat-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow h-100 py-2 stat-card warning">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Most Common Service</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {% if service_types %}
+                                    {% set most_common = service_types|dictsort(by='value')|reverse|first %}
+                                    {{ most_common[0] }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-tools text-warning stat-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-0 shadow h-100 py-2 stat-card danger">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">System Status</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">Active</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-check-circle-fill text-danger stat-icon"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <div class="col-xl-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold">Service Types</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height:300px;">
+                        <canvas id="serviceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-6 mb-4">
+            <div class="card shadow h-100">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold">Calls by Day</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height:300px;">
+                        <canvas id="callsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Calls Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold">Recent Calls</h6>
+                    <a href="{{ url_for('main.calls') }}" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover call-table">
+                            <thead>
+                                <tr>
+                                    <th>Date/Time</th>
+                                    <th>Customer Name</th>
+                                    <th>Phone Number</th>
+                                    <th>Service Requested</th>
+                                    <th>Location</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for call in recent_call_logs %}
+                                <tr data-url="{{ url_for('main.call_detail', timestamp=call.timestamp) }}">
+                                    <td>{{ call.timestamp|replace('_', ' ')|replace('.json', '') }}</td>
+                                    <td>{{ call.name }}</td>
+                                    <td>{{ call.phone_number }}</td>
+                                    <td>{{ call.service_requested }}</td>
+                                    <td>{{ call.service_location }}</td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center">No call logs found</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        loadDashboardStats();
+    });
+</script>
+{% endblock %}

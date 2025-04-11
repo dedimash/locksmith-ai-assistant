@@ -1,0 +1,66 @@
+Please create a full voice-based AI assistant that automatically answers incoming phone calls via Twilio and performs a short conversation with the customer.
+
+The goal of the call is to collect 4 key pieces of information:
+
+Customer’s Name
+
+Customer’s Phone Number (+ Business Name if commercial)
+
+The service requested (+ Make, Model & Year if it’s for a vehicle)
+
+The service location or city
+
+The voice of the agent should be generated using ElevenLabs (natural female voice, professional and friendly tone).
+
+Speech-to-Text should use Google Cloud Speech-to-Text.
+The assistant logic should be powered by OpenAI GPT-3.5 (for smart context awareness).
+
+After collecting all the info, the agent should say:
+“Ok, please stay by your phone, the technician will call you right back.”
+
+The call should be initiated and managed through Twilio. The agent should support 2-way voice (customer says something → AI answers with audio).
+
+The following API credentials should be used:
+
+Twilio
+
+Account SID: AC27ce43e7ed60895230a5246b32a5b247
+
+Auth Token: 0dd96d4c661ccc6bdba1f11137cdaeed
+
+Phone Number: +16282579348
+
+OpenAI (GPT-3.5)
+
+API Key: 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
+
+ElevenLabs
+
+API Key: sk_708f56e2c500b056f005fae190dbe0a53f2014b697c2b2ca
+
+Google Speech-to-Text (optional Whisper fallback)
+
+API Key: AIzaSyAUMjsoa0lhgpmNEuJHmIkulbNiakBiELw                                                                                                                      
+                                                                                                                                                                                                      Script to Follow in the Conversation:
+
+“Thanks for calling the Locksmith, this is Angi, may I know your name?”  
+➝ [Wait for answer]  
+ 
+“What is the best number to call you back on?”  
+➝ [Wait for answer]  
+ 
+“What service can we help you with?”  
+➝ [Wait for answer]  
+ 
+→ IF the service is for a car:  
+“What is the make, model and year of the vehicle?”  
+ 
+→ IF the customer is calling from a business:  
+“What is the name of the business?”  
+ 
+→ IF the customer wants to go to a shop or store:  
+“What city are you in?”  
+ 
+“What is the address where you need help?”  
+ 
+“Ok, please stay by your phone, the technician will call you right back.”

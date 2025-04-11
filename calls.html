@@ -1,0 +1,226 @@
+{% extends "layout.html" %}
+
+{% block title %}Locksmith AI Assistant - Call Logs{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">Call Logs</h1>
+    
+    <!-- Search and Filter -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold">Search and Filter</h6>
+        </div>
+        <div class="card-body">
+            <form id="filter-form" class="row g-3">
+                <div class="col-md-4">
+                    <label for="search" class="form-label">Search</label>
+                    <input type="text" class="form-control" id="search" placeholder="Search by name, phone, or service...">
+                </div>
+                <div class="col-md-3">
+                    <label for="service-type" class="form-label">Service Type</label>
+                    <select class="form-select" id="service-type">
+                        <option value="">All Services</option>
+                        {% for service in service_types|default({}) %}
+                            <option value="{{ service }}">{{ service }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="date-range" class="form-label">Date Range</label>
+                    <select class="form-select" id="date-range">
+                        <option value="all">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-primary w-100" id="apply-filter">Apply</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Call Logs Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold">All Call Logs</h6>
+            <div>
+                <button class="btn btn-sm btn-outline-secondary me-2" id="export-csv">
+                    <i class="bi bi-download me-1"></i> Export CSV
+                </button>
+                <button class="btn btn-sm btn-outline-danger" id="clear-filters">
+                    <i class="bi bi-x-circle me-1"></i> Clear Filters
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover call-table" id="calls-table">
+                    <thead>
+                        <tr>
+                            <th>Date/Time</th>
+                            <th>Customer Name</th>
+                            <th>Phone Number</th>
+                            <th>Service Requested</th>
+                            <th>Location</th>
+                            <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for call in call_logs %}
+                        <tr>
+                            <td>{{ call.timestamp|replace('_', ' ')|replace('.json', '') }}</td>
+                            <td>{{ call.name }}</td>
+                            <td>{{ call.phone_number }}</td>
+                            <td>{{ call.service_requested }}</td>
+                            <td>{{ call.service_location }}</td>
+                            <td>
+                                <a href="{{ url_for('main.call_detail', timestamp=call.timestamp) }}" class="btn btn-sm btn-primary">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center">No call logs found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <nav aria-label="Call logs pagination" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Search functionality
+        const searchInput = document.getElementById('search');
+        const serviceSelect = document.getElementById('service-type');
+        const dateRangeSelect = document.getElementById('date-range');
+        const applyFilterBtn = document.getElementById('apply-filter');
+        const clearFiltersBtn = document.getElementById('clear-filters');
+        const exportCsvBtn = document.getElementById('export-csv');
+        const table = document.getElementById('calls-table');
+        
+        // Apply filters
+        applyFilterBtn.addEventListener('click', function() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const serviceType = serviceSelect.value;
+            const dateRange = dateRangeSelect.value;
+            
+            const rows = table.querySelectorAll('tbody tr');
+            
+            rows.forEach(function(row) {
+                let showRow = true;
+                
+                // Search term filter
+                if (searchTerm) {
+                    const text = row.textContent.toLowerCase();
+                    if (!text.includes(searchTerm)) {
+                        showRow = false;
+                    }
+                }
+                
+                // Service type filter
+                if (serviceType && showRow) {
+                    const service = row.cells[3].textContent;
+                    if (service !== serviceType) {
+                        showRow = false;
+                    }
+                }
+                
+                // Date range filter (simplified for demo)
+                if (dateRange !== 'all' && showRow) {
+                    const dateStr = row.cells[0].textContent;
+                    const date = new Date(dateStr);
+                    const today = new Date();
+                    
+                    if (dateRange === 'today') {
+                        if (date.toDateString() !== today.toDateString()) {
+                            showRow = false;
+                        }
+                    } else if (dateRange === 'week') {
+                        const weekAgo = new Date();
+                        weekAgo.setDate(today.getDate() - 7);
+                        if (date < weekAgo) {
+                            showRow = false;
+                        }
+                    } else if (dateRange === 'month') {
+                        const monthAgo = new Date();
+                        monthAgo.setMonth(today.getMonth() - 1);
+                        if (date < monthAgo) {
+                            showRow = false;
+                        }
+                    }
+                }
+                
+                // Show or hide row
+                row.style.display = showRow ? '' : 'none';
+            });
+        });
+        
+        // Clear filters
+        clearFiltersBtn.addEventListener('click', function() {
+            searchInput.value = '';
+            serviceSelect.selectedIndex = 0;
+            dateRangeSelect.selectedIndex = 0;
+            
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach(function(row) {
+                row.style.display = '';
+            });
+        });
+        
+        // Export to CSV
+        exportCsvBtn.addEventListener('click', function() {
+            const rows = table.querySelectorAll('tbody tr');
+            let csvContent = "Date/Time,Customer Name,Phone Number,Service Requested,Location\n";
+            
+            rows.forEach(function(row) {
+                if (row.style.display !== 'none') {
+                    const cells = row.querySelectorAll('td');
+                    const rowData = [
+                        cells[0].textContent,
+                        cells[1].textContent,
+                        cells[2].textContent,
+                        cells[3].textContent,
+                        cells[4].textContent
+                    ].map(cell => `"${cell.replace(/"/g, '""')}"`);
+                    
+                    csvContent += rowData.join(',') + '\n';
+                }
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'call_logs.csv');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+    });
+</script>
+{% endblock %}
